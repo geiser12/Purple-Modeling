@@ -1,0 +1,88 @@
+---
+title: "initialdist_bargraphs"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Load in packages and dataset. Then filter out irrelevant columns.
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(readxl)
+InitialDistibution_Table <- read_excel("C:/Purple Modeling/InitialDistibution_Table2.xlsx", 
+    skip = 6)
+
+data1 <- InitialDistibution_Table %>% select(
+  InitialPublicDistribution, `avg(logodds)`, `var(logodds)`
+)
+```
+First, I need to separate the dataset into the different initial distributions. Now, I will calculate Expectation of Accuracy, Expectation of Polarization, Predictability of Polarization, and Predictability of Accuracy.
+```{r}
+Idistribution<- filter(data1, InitialPublicDistribution=="IID")
+
+distribution1<- filter(data1, InitialPublicDistribution=="1")
+
+halfdistribution<- filter(data1, InitialPublicDistribution=="0.5")
+
+splitdistribution<- filter(data1, InitialPublicDistribution=="split")
+
+#split distribution calculations
+aasplit<- mean(splitdistribution$`avg(logodds)`)
+avsplit<- mean(splitdistribution$`var(logodds)`)
+vasplit<- var(splitdistribution$`avg(logodds)`)
+vvsplit<- var(splitdistribution$`var(logodds)`)
+
+#half distribution calculations
+aahalf<- mean(halfdistribution$`avg(logodds)`)
+avhalf<- mean(halfdistribution$`var(logodds)`)
+vahalf<- var(halfdistribution$`avg(logodds)`)
+vvhalf<- var(halfdistribution$`var(logodds)`)
+
+#IID distribution calculations
+aaiid<- mean(Idistribution$`avg(logodds)`)
+aviid<- mean(Idistribution$`var(logodds)`)
+vaiid<- var(Idistribution$`avg(logodds)`)
+vviid<- var(Idistribution$`var(logodds)`)
+
+#1 Distribution calculations
+aa1<- mean(distribution1$`avg(logodds)`)
+av1<- mean(distribution1$`var(logodds)`)
+va1<- var(distribution1$`avg(logodds)`)
+vv1<- var(distribution1$`var(logodds)`)
+```
+Now I can create the final data table that I will use for the bar graphs.
+```{r}
+names1 = c("IID", "1", "0.5", "Split")
+finaldata<- data.frame(names1)
+finaldata$aa<- c(aaiid, aa1, aahalf, aasplit)
+finaldata$av<- c(aviid, av1, avhalf, avsplit)
+finaldata$va<- c(vaiid, va1, vahalf, vasplit)
+finaldata$vv<- c(vviid, vv1, vvhalf, vvsplit)
+```
+Now the bar graphs!
+```{r}
+plot1 <- barplot(height = finaldata$aa,
+                 names=finaldata$names1,
+                 col=rgb(0.2,0.4,0.6,0.6),
+                 main="Expectation of Accuracy Comparison", ylim=c(0,1))
+
+plot2 <- barplot(height = finaldata$av,
+                 names=finaldata$names1,
+                 col=rgb(0.2,0.4,0.6,0.6),
+                 main="Expectation of Polarization Comparison", ylim=c(0, .15))
+
+plot3 <- barplot(height = finaldata$va,
+                 names=finaldata$names1,
+                 col=rgb(0.2,0.4,0.6,0.6),
+                 main="Predictability of Accuracy Comparison", ylim=c(0, 0.08))
+
+plot4 <- barplot(height = finaldata$vv,
+                 names=finaldata$names1,
+                 col=rgb(0.2,0.4,0.6,0.6),
+                 main="Predictability of Polarization Comparison", ylim=c(0, 0.003))
+```
+

@@ -1,0 +1,105 @@
+---
+title: "Blue Team Data"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Load in the necessary libraries and the dataset.
+```{r message=FALSE, warning=FALSE}
+#import libraries
+library(gganimate)
+library(ggplot2)
+library(tidyverse)
+library(rgl)
+library(magick)
+library(matrixStats)
+library(readxl)
+
+#import the data from excel and take a look
+blueteam_data1 <- read_excel("blueteam_data2.xlsx", 
+                             skip = 6)
+```
+Filter out irrelevant columns from the dataset, calculate the mean and variance of the dataset and then refilter.
+```{r message=FALSE, warning=FALSE}
+#filter out irrelevant columns
+data1 <- blueteam_data1 %>% select(
+  SkillSlider, BiasSlider, HonestySlider, 19:42
+)
+
+#calculate the mean and variance of credence
+mean1<- rowMeans(data1[,4:27])
+var1<- rowVars(as.matrix(data1[,4:27]))
+
+#add the rows back to the dataset and refilter
+data1$mean <- mean1
+data1$var <- var1
+
+data2 <- data1 %>% select(
+  SkillSlider, BiasSlider, HonestySlider, mean, var
+)
+```
+Calculate AA, VA, AV, and VV and do some necessary restructuring of the data.
+```{r message=FALSE, warning=FALSE}
+#Next, I will calculate the AA, AV, VA, and VV. Each one of these new datasets will be a graph.
+
+AA<- data2 %>% 
+  group_by(SkillSlider, BiasSlider, HonestySlider) %>%
+  summarize(mean(mean))
+
+AV <- data2 %>% 
+  group_by(SkillSlider, BiasSlider, HonestySlider) %>%
+  summarize(mean(var))
+
+VA <- data2 %>% 
+  group_by(SkillSlider, BiasSlider, HonestySlider) %>%
+  summarize(var(mean))
+
+VV <- data2 %>% 
+  group_by(SkillSlider, BiasSlider, HonestySlider) %>%
+  summarize(var(var))
+
+#convert the data into dataframes
+AA<-data.frame(AA)
+AV<-data.frame(AV)
+VA<-data.frame(VA)
+VV<-data.frame(VV)
+#change the names of the fourth row
+names(AA)[4] <- 'AA1'
+names(AV)[4] <- 'AV1'
+names(VA)[4] <- 'VA1'
+names(VV)[4] <- 'VV1'
+```
+Create the graphs.
+```{r}
+#create the AA graph
+graphAA <- ggplot()+
+  geom_point(data = AA, aes(x=AA1, y=SkillSlider))+
+  geom_point(data = AA, aes(x=AA1, y=BiasSlider), color='red')+
+  geom_point(data = AA, aes(x=AA1, y=HonestySlider), color='blue')+
+  labs(y= "Slider", x = "Average(Average(credence))")
+print(graphAA)
+#create the VA graph
+graphVA <- ggplot()+
+  geom_point(data = VA, aes(x=VA1, y=SkillSlider))+
+  geom_point(data = VA, aes(x=VA1, y=BiasSlider), color='red')+
+  geom_point(data = VA, aes(x=VA1, y=HonestySlider), color='blue')+
+  labs(y= "Slider", x = "Variance(Average(credence))")
+print(graphVA)
+#create the AV graph
+graphAV <- ggplot()+
+  geom_point(data = AV, aes(x=AV1, y=SkillSlider))+
+  geom_point(data = AV, aes(x=AV1, y=BiasSlider), color='red')+
+  geom_point(data = AV, aes(x=AV1, y=HonestySlider), color='blue')+
+  labs(y= "Slider", x = "Average(Variance(credence))")
+print(graphAV)
+#create the VV graph
+graphVV <- ggplot()+
+  geom_point(data = VV, aes(x=VV1, y=SkillSlider))+
+  geom_point(data = VV, aes(x=VV1, y=BiasSlider), color='red')+
+  geom_point(data = VV, aes(x=VV1, y=HonestySlider), color='blue')+
+  labs(y= "Slider", x = "Variance(Variance(credence))")
+print(graphVV)
+```
+

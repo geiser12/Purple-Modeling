@@ -1,0 +1,157 @@
+library(ggplot2)
+library(gganimate)
+library(gifski)
+library(tidyverse)
+library(readxl)
+library(matrixStats)
+library(ggthemes)
+
+initialdist_gifdata <- read_excel("C:/Purple Modeling/initialdist_gifdata.xlsx", 
+                                  skip = 6)
+
+data1 <- initialdist_gifdata %>% select(
+  InitialPublicDistribution, step, 16:39
+)
+
+
+#Now I can calculate the mean and variance of the credence.
+
+mean1<- rowMeans(data1[,3:26])
+var1<- rowVars(as.matrix(data1[,3:26]))
+
+data1$mean <- mean1
+data1$var <- var1
+
+data2<- data1 %>% select(
+  InitialPublicDistribution, step, mean, var
+)
+#Next, I will calculate the AA, AV, VA, and VV. Each one of these new datasets will be a graph.
+
+AA<- data2 %>% 
+  group_by(step, InitialPublicDistribution) %>%
+  summarize(mean(mean))
+
+AV <- data2 %>% 
+  group_by(step, InitialPublicDistribution) %>%
+  summarize(mean(var))
+
+VA <- data2 %>% 
+  group_by(step, InitialPublicDistribution) %>%
+  summarize(var(mean))
+
+VV <- data2 %>% 
+  group_by(step, InitialPublicDistribution) %>%
+  summarize(var(var))
+
+names(AA)[3] <- 'AA1'
+names(AV)[3] <- 'AV1'
+names(VA)[3] <- 'VA1'
+names(VV)[3] <- 'VV1'
+
+#Now to create the graphs!
+
+IIDdistribution<- filter(AA, InitialPublicDistribution=="IID")
+
+distribution1<- filter(AA, InitialPublicDistribution=="1")
+
+halfdistribution<- filter(AA, InitialPublicDistribution=="0.5")
+
+splitdistribution<- filter(AA, InitialPublicDistribution=="split")
+
+graphAA<- ggplot()+
+  geom_line(data=IIDdistribution, aes(x = step, y = AA1))+
+  geom_line(data=splitdistribution, aes(x = step, y = AA1), color='red')+
+  geom_line(data=halfdistribution, aes(x = step, y = AA1), color='green')+
+  geom_line(data=distribution1, aes(x = step, y = AA1), color='blue')+
+  theme_economist()+
+  labs(title="Expectation of Accuracy")+
+  transition_reveal(step)+
+  view_follow(fixed_y=T)
+
+animate(graphAA,
+        end_pause = 0,
+        res = 100,
+        duration = 25,
+        fps = 30)
+
+#av graph
+
+IIDdistributionAV<- filter(AV, InitialPublicDistribution=="IID")
+
+distribution1AV<- filter(AV, InitialPublicDistribution=="1")
+
+halfdistributionAV<- filter(AV, InitialPublicDistribution=="0.5")
+
+splitdistributionAV<- filter(AV, InitialPublicDistribution=="split")
+
+graphAV<- ggplot()+
+  geom_line(data=IIDdistributionAV, aes(x = step, y = AV1))+
+  geom_line(data=splitdistributionAV, aes(x = step, y = AV1), color='red')+
+  geom_line(data=halfdistributionAV, aes(x = step, y = AV1), color='green')+
+  geom_line(data=distribution1AV, aes(x = step, y = AV1), color='blue')+
+  theme_economist()+
+  labs(title="Expectation of Polarization")+
+  transition_reveal(step)+
+  view_follow(fixed_y=T)
+
+animate(graphAV,
+        end_pause = 0,
+        res = 100,
+        duration = 25,
+        fps = 30)
+
+#va graph
+IIDdistributionVA<- filter(VA, InitialPublicDistribution=="IID")
+
+distribution1VA<- filter(VA, InitialPublicDistribution=="1")
+
+halfdistributionVA<- filter(VA, InitialPublicDistribution=="0.5")
+
+splitdistributionVA<- filter(VA, InitialPublicDistribution=="split")
+
+graphVA<- ggplot()+
+  geom_line(data=IIDdistributionVA, aes(x = step, y = VA1))+
+  geom_line(data=splitdistributionVA, aes(x = step, y = VA1), color='red')+
+  geom_line(data=halfdistributionVA, aes(x = step, y = VA1), color='green')+
+  geom_line(data=distribution1VA, aes(x = step, y = VA1), color='blue')+
+  theme_economist()+
+  labs(title="Predictability of Accuracy")+
+  transition_reveal(step)+
+  view_follow(fixed_y=T)
+
+animate(graphVA,
+        end_pause = 0,
+        res = 100,
+        duration = 25,
+        fps = 30)
+
+#VV graph
+IIDdistributionVV<- filter(VV, InitialPublicDistribution=="IID")
+
+distribution1VV<- filter(VV, InitialPublicDistribution=="1")
+
+halfdistributionVV<- filter(VV, InitialPublicDistribution=="0.5")
+
+splitdistributionVV<- filter(VV, InitialPublicDistribution=="split")
+
+graphVV<- ggplot()+
+  geom_line(data=IIDdistributionVV, aes(x = step, y = VV1))+
+  geom_line(data=splitdistributionVV, aes(x = step, y = VV1), color='red')+
+  geom_line(data=halfdistributionVV, aes(x = step, y = VV1), color='green')+
+  geom_line(data=distribution1VV, aes(x = step, y = VV1), color='blue')+
+  theme_economist()+
+  labs(title="Predictability of Polarization")+
+  transition_reveal(step)+
+  view_follow(fixed_y=T)
+
+animate(graphVV,
+        end_pause = 0,
+        res = 100,
+        duration = 25,
+        fps = 30)
+
+#print all the graphs
+print(graphAA)
+print(graphAV)
+print(graphVA)
+print(graphVV)

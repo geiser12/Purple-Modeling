@@ -1,0 +1,51 @@
+---
+title: "Bar Graphs"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+First, load in the data and necessary libraries.
+```{r, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(tidyverse)
+library(readxl)
+SelectiveSharing <- read_excel("C:/Purple Modeling/updatedselectivesharing.xlsx", 
+    sheet = "Sheet3", skip = 3)
+```
+Next, I will filter the dataset according to these specifications: Exposure = Preferential Attachment, LoseFreq = 10, and SeekFreq = 10.
+```{r}
+data1 <- SelectiveSharing %>% select(
+  Exposure, LoseTouch, LoseFreq, SeekOut, SeekFreq, aa, av, va, vv
+)
+data1 <- filter(data1, Exposure == "Preferential Attachment", SeekFreq==10, LoseFreq==10)
+```
+Finally, I can create four separate bar graphs from the above values.
+```{r}
+labels1 <- c("SS", "SD", "DS", "DD")
+
+data1$new_col <- labels1
+
+plot1 <- barplot(height = data1$aa,
+                 names=data1$new_col,
+                 col=rgb(0.2,0.4,0.6,0.6),
+                 main="Expectation of Accuracy Comparison", ylim=c(0,5))
+
+plot2 <- barplot(height = data1$vv,
+                 names=data1$new_col, col=rgb(0.2,0.4,0.6,0.6),
+                 main="Predictability of Polarization Comparison",
+                 ylim=c(0,10000))
+
+plot3 <- barplot(height = data1$va,
+                 names=data1$new_col, 
+                 main="Predictability of Accuracy Comparison",
+                 col=rgb(0.2,0.4,0.6,0.6),ylim=c(0,250))
+
+plot4 <- barplot(height = data1$av,
+                 names=data1$new_col,
+                 main="Expectation of Polarization Comparison",
+                 col=rgb(0.2,0.4,0.6,0.6), ylim=c(0,140))
+
+
+```

@@ -1,0 +1,241 @@
+---
+title: "heatmapsfinal"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(pheatmap)
+library(readxl)
+DistributionVsDifference_data <- read_excel(
+  "C:/Purple Modeling/DistributionVsDifference_data.xlsx", 
+    skip = 6)
+
+data1<- DistributionVsDifference_data %>% 
+  select(mean,
+         var,
+         InitialPublicDistribution,
+         LoseTouch,
+         SeekOut)
+```
+
+Filter all the conditional distributions in order to make calculations easy in the next step.
+```{r}
+Idistribution_SS<- filter(data1,
+                          InitialPublicDistribution=="IID",
+                          SeekOut=='Similarity', 
+                          LoseTouch=='Similarity')
+
+distribution1_SS<- filter(data1, 
+                          InitialPublicDistribution=="1",
+                          SeekOut=='Similarity', 
+                          LoseTouch=='Similarity')
+
+halfdistribution_SS<- filter(data1, 
+                             InitialPublicDistribution=="0.5", 
+                             SeekOut=='Similarity',
+                             LoseTouch=='Similarity')
+
+splitdistribution_SS<- filter(data1,
+                              InitialPublicDistribution=="split",
+                              SeekOut=='Similarity', 
+                              LoseTouch=='Similarity')
+
+Idistribution_SD<- filter(data1, 
+                          InitialPublicDistribution=="IID",
+                          SeekOut=='Similarity',
+                          LoseTouch=='Difference')
+
+distribution1_SD<- filter(data1,
+                          InitialPublicDistribution=="1",
+                          SeekOut=='Similarity', 
+                          LoseTouch=='Difference')
+
+halfdistribution_SD<- filter(data1, 
+                             InitialPublicDistribution=="0.5", 
+                             SeekOut=='Similarity',
+                             LoseTouch=='Difference')
+
+splitdistribution_SD<- filter(data1,
+                              InitialPublicDistribution=="split",
+                              SeekOut=='Similarity',
+                              LoseTouch=='Difference')
+
+Idistribution_DD<- filter(data1, 
+                          InitialPublicDistribution=="IID",
+                          SeekOut=='Difference',
+                          LoseTouch=='Difference')
+
+distribution1_DD<- filter(data1,
+                          InitialPublicDistribution=="1",
+                          SeekOut=='Difference',
+                          LoseTouch=='Difference')
+
+halfdistribution_DD<- filter(data1,
+                             InitialPublicDistribution=="0.5", 
+                             SeekOut=='Difference',
+                             LoseTouch=='Difference')
+
+splitdistribution_DD<- filter(data1,
+                              InitialPublicDistribution=="split",
+                              SeekOut=='Difference',
+                              LoseTouch=='Difference')
+
+Idistribution_DS<- filter(data1,
+                          InitialPublicDistribution=="IID",
+                          SeekOut=='Difference',
+                          LoseTouch=='Similarity')
+
+distribution1_DS<- filter(data1,
+                          InitialPublicDistribution=="1",
+                          SeekOut=='Difference',
+                          LoseTouch=='Similarity')
+
+halfdistribution_DS<- filter(data1,
+                             InitialPublicDistribution=="0.5",
+                             SeekOut=='Difference',
+                             LoseTouch=='Similarity')
+
+splitdistribution_DS<- filter(data1,
+                              InitialPublicDistribution=="split",
+                              SeekOut=='Difference',
+                              LoseTouch=='Similarity')
+
+```
+Create the four heat maps
+```{r}
+AA_1<- c(mean(distribution1_SS$mean),
+         mean(distribution1_SD$mean),
+         mean(distribution1_DS$mean),
+         mean(distribution1_DD$mean))
+
+AA_IID<- c(mean(Idistribution_SS$mean),
+           mean(Idistribution_SD$mean),
+           mean(Idistribution_DS$mean),
+           mean(Idistribution_DD$mean))
+
+AA_Half<- c(mean(halfdistribution_SS$mean),
+            mean(halfdistribution_SD$mean),
+            mean(halfdistribution_DS$mean),
+            mean(halfdistribution_DD$mean))
+
+AA_Split<- c(mean(splitdistribution_SS$mean),
+             mean(splitdistribution_SD$mean),
+             mean(splitdistribution_DS$mean),
+             mean(splitdistribution_DD$mean))
+
+labels1<- c("SS", "SD", "DS", "DD")
+labels2<- c("IID","1", "0.5", "Split")
+
+heatmap_AA <- data.frame(AA_IID, AA_1, AA_Half, AA_Split)
+rownames(heatmap_AA)<-labels1
+colnames(heatmap_AA)<-labels2
+
+AAheatmap1<-heatmap(as.matrix(heatmap_AA),
+                    scale = "row",
+                    main = "AA")
+```
+
+```{r}
+AV_1<- c(mean(distribution1_SS$var),
+         mean(distribution1_SD$var),
+         mean(distribution1_DS$var),
+         mean(distribution1_DD$var))
+
+AV_IID<- c(mean(Idistribution_SS$var),
+           mean(Idistribution_SD$var),
+           mean(Idistribution_DS$var),
+           mean(Idistribution_DD$var))
+
+AV_Half<- c(mean(halfdistribution_SS$var),
+            mean(halfdistribution_SD$var),
+            mean(halfdistribution_DS$var),
+            mean(halfdistribution_DD$var))
+
+AV_Split<- c(mean(splitdistribution_SS$var),
+             mean(splitdistribution_SD$var),
+             mean(splitdistribution_DS$var),
+             mean(splitdistribution_DD$var))
+
+labels1<- c("SS", "SD", "DS", "DD")
+labels2<- c("IID","1", "0.5", "Split")
+
+heatmap_AV <- data.frame(AV_IID, AV_1, AV_Half, AV_Split)
+rownames(heatmap_AV)<-labels1
+colnames(heatmap_AV)<-labels2
+
+AVheatmap1<-heatmap(as.matrix(heatmap_AV),
+                    scale = "row",
+                    main = "AV")
+```
+```{r}
+VV_1<- c(var(distribution1_SS$var),
+         var(distribution1_SD$var),
+         var(distribution1_DS$var),
+         var(distribution1_DD$var))
+
+VV_IID<- c(var(Idistribution_SS$var),
+           var(Idistribution_SD$var),
+           var(Idistribution_DS$var),
+           var(Idistribution_DD$var))
+
+VV_Half<- c(var(halfdistribution_SS$var),
+            var(halfdistribution_SD$var),
+            var(halfdistribution_DS$var),
+            var(halfdistribution_DD$var))
+
+VV_Split<- c(var(splitdistribution_SS$var),
+             var(splitdistribution_SD$var),
+             var(splitdistribution_DS$var),
+             var(splitdistribution_DD$var))
+
+labels1<- c("SS", "SD", "DS", "DD")
+labels2<- c("IID","1", "0.5", "Split")
+
+heatmap_VV <- data.frame(VV_IID, VV_1, VV_Half, VV_Split)
+rownames(heatmap_VV)<-labels1
+colnames(heatmap_VV)<-labels2
+
+VVheatmap1<-heatmap(as.matrix(heatmap_VV),
+                    scale = "row",
+                    main = "VV")
+```
+
+```{r}
+VA_1<- c(var(distribution1_SS$mean),
+         var(distribution1_SD$mean),
+         var(distribution1_DS$mean),
+         var(distribution1_DD$mean))
+
+VA_IID<- c(var(Idistribution_SS$mean),
+           var(Idistribution_SD$mean),
+           var(Idistribution_DS$mean),
+           var(Idistribution_DD$mean))
+
+VA_Half<- c(var(halfdistribution_SS$mean),
+            var(halfdistribution_SD$mean),
+            var(halfdistribution_DS$mean),
+            var(halfdistribution_DD$mean))
+
+VA_Split<- c(var(splitdistribution_SS$mean),
+             var(splitdistribution_SD$mean),
+             var(splitdistribution_DS$mean),
+             var(splitdistribution_DD$mean))
+
+heatmap_VA <- data.frame(VA_IID, VA_1, VA_Half, VA_Split)
+labels1<- c("SS", "SD", "DS", "DD")
+labels2<- c("IID","1", "0.5", "Split")
+rownames(heatmap_VA)<-labels1
+colnames(heatmap_VA)<-labels2
+
+
+VAheatmap1<-heatmap(as.matrix(heatmap_VA),
+                    scale = "row",
+                    main = "VA")
+```
+
