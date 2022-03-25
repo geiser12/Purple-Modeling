@@ -1,0 +1,20 @@
+---
+title: "exposure_vs_personaldiff_vs_dist"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Load in the necessary libraries.
+```{r message=FALSE, warning=FALSE}
+library(ff)
+library(tidyverse)
+library(readxl)
+library(ggplot2)
+library(googledrive)
+
+#attempt to load in data from googledrive
+
+```
+
