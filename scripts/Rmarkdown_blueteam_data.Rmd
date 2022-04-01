@@ -13,13 +13,13 @@ library(gganimate)
 library(ggplot2)
 library(tidyverse)
 library(rgl)
-library(magick)
 library(matrixStats)
 library(readxl)
 
 #import the data from excel and take a look
-blueteam_data1 <- read_excel("blueteam_data2.xlsx", 
-                             skip = 6)
+blueteam_data1 <- read_excel("data/blueteam_data2.xlsx", 
+    skip = 6)
+head(blueteam_data2)
 ```
 Filter out irrelevant columns from the dataset, calculate the mean and variance of the dataset and then refilter.
 ```{r message=FALSE, warning=FALSE}
