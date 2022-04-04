@@ -104,7 +104,9 @@ print(graphVV)
 ```
 As can be seen, the graphs above are not easily interpreted. I will now put the data in 3d form to see if it helps the readability.
 ```{r}
-graphaa3d<- plot_ly()
+graphaa3d<- plot_ly(x=AA$SkillSlider, y=AA$BiasSlider, z=AA$HonestySlider) %>% add_markers(color = AA$AA1)
+graphaa3d
+
   
 ```
 
