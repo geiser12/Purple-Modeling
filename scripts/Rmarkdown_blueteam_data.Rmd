@@ -15,11 +15,11 @@ library(tidyverse)
 library(rgl)
 library(matrixStats)
 library(readxl)
+library(plotly)
 
 #import the data from excel and take a look
-blueteam_data1 <- read_excel("data/blueteam_data2.xlsx", 
-    skip = 6)
-head(blueteam_data2)
+blueteam_data1<- blueteam_data2
+View(blueteam_data1)
 ```
 Filter out irrelevant columns from the dataset, calculate the mean and variance of the dataset and then refilter.
 ```{r message=FALSE, warning=FALSE}
@@ -101,5 +101,10 @@ graphVV <- ggplot()+
   geom_point(data = VV, aes(x=VV1, y=HonestySlider), color='blue')+
   labs(y= "Slider", x = "Variance(Variance(credence))")
 print(graphVV)
+```
+As can be seen, the graphs above are not easily interpreted. I will now put the data in 3d form to see if it helps the readability.
+```{r}
+graphaa3d<- plot_ly()
+  
 ```
 
