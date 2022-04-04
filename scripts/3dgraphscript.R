@@ -59,5 +59,27 @@ names(AV)[4] <- 'AV1'
 names(VA)[4] <- 'VA1'
 names(VV)[4] <- 'VV1'
 
-graphaa3d<- plot_ly(x=AA$SkillSlider, y=AA$BiasSlider, z=AA$HonestySlider) %>% add_markers(color = AA$AA1)
+#create the graphs
+graphaa3d<- plot_ly(x=AA$SkillSlider,
+                    y=AA$BiasSlider,
+                    z=AA$HonestySlider) %>% 
+  add_markers(color = AA$AA1)
 graphaa3d
+
+graphav3d <- plot_ly(x=AV$SkillSlider,
+                  y=AV$BiasSlider,
+                  z=AV$HonestySlider) %>% 
+  add_markers(color = AV$AV1) 
+graphav3d
+
+graphva3d <- plot_ly(x=VA$SkillSlider,
+                     y=VA$BiasSlider,
+                     z=VA$HonestySlider) %>% 
+  add_markers(color = VA$VA1)
+graphva3d
+
+graphvv3d <- plot_ly(x=VV$SkillSlider,
+                     y=VV$BiasSlider,
+                     z=VV$HonestySlider) %>% 
+  add_markers(color = VV$VV1)
+graphvv3d
