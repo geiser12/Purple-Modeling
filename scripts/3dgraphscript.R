@@ -27,9 +27,9 @@ data1$var <- var1
 data2 <- data1 %>% select(
   SkillSlider, BiasSlider, HonestySlider, mean, var
 )
-```
-Calculate AA, VA, AV, and VV and do some necessary restructuring of the data.
-```{r message=FALSE, warning=FALSE}
+
+#Calculate AA, VA, AV, and VV and do some necessary restructuring of the data.
+
 #Next, I will calculate the AA, AV, VA, and VV. Each one of these new datasets will be a graph.
 
 AA<- data2 %>% 
