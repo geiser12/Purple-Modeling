@@ -79,25 +79,46 @@ bscols(
 graphaa3d
 
 
-##############################################
-graphav3d <- plot_ly(x=AV$SkillSlider,
-                  y=AV$BiasSlider,
-                  z=AV$HonestySlider) %>% 
-  add_markers(color = AV$AV1) 
-graphav3d
+####################AV Graph##########################
+shared_AV<- SharedData$new(AV)
 
+bscols(
+  list(
+    filter_checkbox('SkillSlider','Skill Slider', shared_AV, group = AV$SkillSlider,inline = TRUE),
+    filter_checkbox('BiasSlider','Bias Slider', shared_AV, group = AV$BiasSlider,inline = TRUE),
+    filter_checkbox('HonestySlider','Honesty Slider', shared_AV, group = AV$HonestySlider,inline = TRUE)
+  ),plot_ly(data = shared_AV,
+            x=AV$SkillSlider,
+            y=AV$BiasSlider,
+            z=AV$HonestySlider) %>% 
+    add_markers(color = AV$AV1))
+
+###################VA Graph#########################
+shared_VA<- SharedData$new(VA)
+
+bscols(
+  list(
+    filter_checkbox('SkillSlider','Skill Slider', shared_VA, group = VA$SkillSlider,inline = TRUE),
+    filter_checkbox('BiasSlider','Bias Slider', shared_VA, group = VA$BiasSlider,inline = TRUE),
+    filter_checkbox('HonestySlider','Honesty Slider', shared_VA, group = VA$HonestySlider,inline = TRUE)
+  ),
+  plot_ly(data = shared_VA,
+            x=VA$SkillSlider,
+            y=VA$BiasSlider,
+            z=VA$HonestySlider) %>% 
+    add_markers(color = VA$VA1))
 
 ############################################
-graphva3d <- plot_ly(x=VA$SkillSlider,
-                     y=VA$BiasSlider,
-                     z=VA$HonestySlider) %>% 
-  add_markers(color = VA$VA1)
-graphva3d
+shared_VV<- SharedData$new(VV)
 
-
-############################################
-graphvv3d <- plot_ly(x=VV$SkillSlider,
-                     y=VV$BiasSlider,
-                     z=VV$HonestySlider) %>% 
-  add_markers(color = VV$VV1)
-graphvv3d
+bscols(
+  list(
+    filter_checkbox('SkillSlider','Skill Slider', shared_VV, group = VV$SkillSlider,inline = TRUE),
+    filter_checkbox('BiasSlider','Bias Slider', shared_VV, group = VV$BiasSlider,inline = TRUE),
+    filter_checkbox('HonestySlider','Honesty Slider', shared_VV, group = VV$HonestySlider,inline = TRUE)
+  ),
+  plot_ly(data = shared_VV,
+          x=VV$SkillSlider,
+          y=VV$BiasSlider,
+          z=VV$HonestySlider) %>% 
+    add_markers(color = VV$VV1))
