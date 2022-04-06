@@ -6,8 +6,11 @@ library(rgl)
 library(matrixStats)
 library(readxl)
 library(plotly)
+library(crosstalk)
 
 #import the data from excel and take a look
+blueteam_data2 <- read_excel("GitHub/Purple-Modeling/data/blueteam_data2.xlsx", 
+                             skip = 6)
 blueteam_data1<- blueteam_data2
 View(blueteam_data1)
 
@@ -60,24 +63,39 @@ names(VA)[4] <- 'VA1'
 names(VV)[4] <- 'VV1'
 
 #create the graphs
-graphaa3d<- plot_ly(x=AA$SkillSlider,
-                    y=AA$BiasSlider,
-                    z=AA$HonestySlider) %>% 
-  add_markers(color = AA$AA1)
+#use crosstalk to add in the filters on the web side
+shared_AA<- SharedData$new(AA)
+
+bscols(
+  list(
+  filter_checkbox('SkillSlider','Skill Slider', shared_AA, group = AA$SkillSlider,inline = TRUE),
+  filter_checkbox('BiasSlider','Bias Slider', shared_AA, group = AA$BiasSlider,inline = TRUE),
+  filter_checkbox('HonestySlider','Honesty Slider', shared_AA, group = AA$HonestySlider,inline = TRUE)
+),plot_ly(data = shared_AA,
+    x=AA$SkillSlider,
+    y=AA$BiasSlider,
+    z=AA$HonestySlider) %>% 
+  add_markers(color = AA$AA1))
 graphaa3d
 
+
+##############################################
 graphav3d <- plot_ly(x=AV$SkillSlider,
                   y=AV$BiasSlider,
                   z=AV$HonestySlider) %>% 
   add_markers(color = AV$AV1) 
 graphav3d
 
+
+############################################
 graphva3d <- plot_ly(x=VA$SkillSlider,
                      y=VA$BiasSlider,
                      z=VA$HonestySlider) %>% 
   add_markers(color = VA$VA1)
 graphva3d
 
+
+############################################
 graphvv3d <- plot_ly(x=VV$SkillSlider,
                      y=VV$BiasSlider,
                      z=VV$HonestySlider) %>% 
